@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minhas Atividades</title>
+<meta name="theme-color" content="#166534">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+  :root {
+    --bg: #f6f7f5; --surface: #ffffff; --surface-2: #eef1ec; --text: #1b1f1c; --muted: #66706a;
+    --line: #dde2dc; --accent: #166534; --accent-soft: #dcfce7; --accent-text: #ffffff;
+    --warn: #9a3412; --warn-soft: #ffedd5; --danger: #b91c1c; --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111412; --surface: #1a1f1c; --surface-2: #232a25; --text: #e7ece8; --muted: #9aa59e;
+      --line: #2e3631; --accent: #4ade80; --accent-soft: #163a24; --accent-text: #0b1a10;
+      --warn: #fdba74; --warn-soft: #3a2414; --danger: #f87171; --shadow: 0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; min-height: 100dvh; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px calc(120px + env(safe-area-inset-bottom)); }
+
+  header.top { display: flex; align-items: center; gap: 8px; padding: calc(12px + env(safe-area-inset-top)) 0 8px; }
+  header.top h1 { font-size: 18px; margin: 0; flex: 1; font-weight: 650; }
+  .pill { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 0; display: inline-flex; align-items: center; gap: 6px; }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .pill.ok .dot { background: #22c55e; } .pill.wait .dot { background: #f59e0b; } .pill.err .dot { background: var(--danger); }
+  .icon-btn { border: 0; background: transparent; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
+  .icon-btn:hover { background: var(--surface-2); }
+  svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .datebar { display: flex; align-items: center; gap: 4px; background: var(--surface); border-radius: 14px; padding: 6px; box-shadow: var(--shadow); }
+  .datebar .center { flex: 1; text-align: center; border: 0; background: transparent; padding: 6px; border-radius: 10px; position: relative; }
+  .datebar .rel { display: block; font-size: 12px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; min-height: 16px; }
+  .datebar .long { display: block; font-size: 17px; font-weight: 600; }
+  .datebar input[type=date] { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+  .today-btn { display: none; margin: 8px auto 0; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 14px; font-size: 14px; }
+  .today-btn.show { display: block; }
+
+  .progress { margin: 16px 2px 8px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+  .bar { flex: 1; height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+
+  h2.sec { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 18px 4px 8px; font-weight: 600; }
+  ul.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  li.task { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border-radius: 12px; padding: 12px; box-shadow: var(--shadow); }
+  .check { flex: none; width: 28px; height: 28px; border-radius: 8px; border: 2px solid var(--line); background: transparent; display: grid; place-items: center; padding: 0; margin-top: 1px; }
+  .check svg { width: 18px; height: 18px; stroke-width: 3; opacity: 0; }
+  li.done .check { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  li.done .check svg { opacity: 1; }
+  .body { flex: 1; min-width: 0; }
+  .txt { word-wrap: break-word; white-space: pre-wrap; }
+  li.done .txt { text-decoration: line-through; color: var(--muted); }
+  .tag { display: inline-block; margin-top: 4px; font-size: 12px; padding: 2px 8px; border-radius: 6px; background: var(--warn-soft); color: var(--warn); }
+  .tag.ok { background: var(--accent-soft); color: var(--accent); }
+  .more { flex: none; width: 32px; height: 32px; margin: -2px -4px 0 0; color: var(--muted); }
+  .empty { text-align: center; color: var(--muted); padding: 40px 16px; }
+
+  .composer { position: fixed; left: 0; right: 0; bottom: 0; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .composer form { max-width: 640px; margin: 0 auto; display: flex; gap: 8px; align-items: center; }
+  .composer input { flex: 1; min-width: 0; font: inherit; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text); }
+  .composer input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .round { flex: none; width: 48px; height: 48px; border-radius: 50%; border: 0; display: grid; place-items: center; }
+  .mic { background: var(--surface-2); }
+  .mic.on { background: var(--danger); color: #fff; animation: pulse 1.2s infinite; }
+  .add { background: var(--accent); color: var(--accent-text); }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,.5);} 70% { box-shadow: 0 0 0 14px rgba(220,38,38,0);} 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0);} }
+  .hint { max-width: 640px; margin: 6px auto 0; font-size: 12px; color: var(--muted); min-height: 16px; }
+
+  .toast { position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 12px; font-size: 14px; display: flex; gap: 12px; align-items: center; opacity: 0; pointer-events: none; transition: .2s; max-width: calc(100% - 32px); z-index: 20; }
+  .toast.show { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
+  .toast button { border: 0; background: transparent; color: var(--accent-soft); font-weight: 700; padding: 0; }
+
+  dialog { border: 0; border-radius: 16px; padding: 0; background: var(--surface); color: var(--text); width: min(520px, calc(100% - 32px)); max-height: calc(100dvh - 48px); box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+  dialog::backdrop { background: rgba(0,0,0,.45); }
+  .dlg { padding: 20px; display: grid; gap: 14px; }
+  .dlg h3 { margin: 0; font-size: 18px; }
+  .dlg h4 { margin: 8px 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .dlg p { margin: 0; color: var(--muted); font-size: 14px; }
+  .dlg label { display: grid; gap: 4px; font-size: 14px; }
+  .dlg input, .dlg textarea { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); width: 100%; }
+  .dlg textarea { min-height: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 10px 14px; font-weight: 550; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  .btn.danger { color: var(--danger); }
+  .btn.block { width: 100%; text-align: left; }
+  .sep { height: 1px; background: var(--line); margin: 4px 0; }
+  .msg { font-size: 14px; }
+  .msg.err { color: var(--danger); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Minhas Atividades</h1>
+    <button class="pill" id="syncPill" title="Sincronização"><span class="dot"></span><span id="syncText">Só neste aparelho</span></button>
+    <button class="icon-btn" id="openSettings" aria-label="Configurações">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="datebar">
+    <button class="icon-btn" id="prevDay" aria-label="Dia anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <button class="center" id="pickDay" aria-label="Escolher data">
+      <span class="rel" id="relLabel"></span>
+      <span class="long" id="longLabel"></span>
+      <input type="date" id="dateInput" tabindex="-1">
+    </button>
+    <button class="icon-btn" id="nextDay" aria-label="Próximo dia"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
+  <button class="today-btn" id="goToday">Voltar para hoje</button>
+
+  <div class="progress"><span id="progText">0 de 0</span><div class="bar"><i id="progBar"></i></div></div>
+
+  <div id="lists"></div>
+</div>
+
+<div class="composer">
+  <form id="addForm" autocomplete="off">
+    <input id="newTask" placeholder="Nova atividade..." enterkeyhint="done" aria-label="Nova atividade">
+    <button type="button" class="round mic" id="micBtn" aria-label="Adicionar por voz">
+      <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/></svg>
+    </button>
+    <button type="submit" class="round add" aria-label="Adicionar">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </form>
+  <div class="hint" id="hint">Toque no microfone e fale. Para várias de uma vez, diga "próxima atividade" entre elas.</div>
+</div>
+
+<div class="toast" id="toast"><span id="toastText"></span><button id="toastAction" hidden></button></div>
+
+<!-- Ações da atividade -->
+<dialog id="taskDlg">
+  <form method="dialog" class="dlg" id="taskForm">
+    <h3>Atividade</h3>
+    <label>Texto<input id="editText"></label>
+    <label>Dia planejado<input type="date" id="editDate"></label>
+    <div class="row">
+      <button class="btn primary" value="save">Salvar</button>
+      <button class="btn" value="tomorrow" type="submit">Passar para amanhã</button>
+      <button class="btn" value="cancel">Cancelar</button>
+    </div>
+    <div class="sep"></div>
+    <button class="btn danger" value="delete">Excluir atividade</button>
+  </form>
+</dialog>
+
+<!-- Configurações -->
+<dialog id="settingsDlg">
+  <div class="dlg">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <h3>Configurações</h3>
+      <button class="icon-btn" id="closeSettings" aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+
+    <h4>Sincronizar computador e celular</h4>
+    <div id="cloudNoCfg">
+      <p>Cole aqui a configuração do Firebase (veja o arquivo GUIA). Faça isso uma vez em cada aparelho.</p>
+      <label style="margin-top:8px"><textarea id="cfgText" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, authDomain: &quot;...&quot;, projectId: &quot;...&quot;, ... };"></textarea></label>
+      <div class="row" style="margin-top:8px"><button class="btn primary" id="saveCfg">Salvar configuração</button></div>
+    </div>
+    <div id="cloudCfg" hidden>
+      <div id="signedOut">
+        <p>Entre com o mesmo e-mail e senha no computador e no celular.</p>
+        <div style="display:grid;gap:8px;margin-top:8px">
+          <label>E-mail<input type="email" id="email" autocomplete="username"></label>
+          <label>Senha (mínimo 6 caracteres)<input type="password" id="password" autocomplete="current-password"></label>
+          <div class="row">
+            <button class="btn primary" id="signIn">Entrar</button>
+            <button class="btn" id="signUp">Criar conta</button>
+          </div>
+        </div>
+      </div>
+      <div id="signedIn" hidden>
+        <p>Conectado como <b id="userEmail"></b>. As atividades sincronizam sozinhas quando houver internet.</p>
+        <div class="row" style="margin-top:8px"><button class="btn" id="signOut">Sair da conta</button></div>
+      </div>
+      <p class="msg" id="authMsg"></p>
+      <div class="row"><button class="btn danger" id="removeCfg">Remover configuração do Firebase</button></div>
+    </div>
+
+    <div class="sep"></div>
+    <h4>Cópia de segurança</h4>
+    <p>Salve um arquivo com todas as atividades, ou restaure de um arquivo.</p>
+    <div class="row">
+      <button class="btn" id="exportBtn">Exportar arquivo</button>
+      <button class="btn" id="importBtn">Importar arquivo</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </div>
+
+    <div class="sep"></div>
+    <h4>Comando de voz</h4>
+    <p>O microfone do app usa o reconhecimento de voz do navegador (Chrome ou Edge), que normalmente precisa de internet. Sem internet, toque na caixa de texto e use o microfone do teclado do celular.</p>
+  </div>
+</dialog>
+
+<script type="module">
+// ---------- Utilidades de data ----------
+const $ = (s) => document.querySelector(s);
+const pad = (n) => String(n).padStart(2, '0');
+const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return ymd(d); };
+const today = () => ymd(new Date());
+const short = (s) => { const d = parse(s); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`; };
+const longDate = (s) => parse(s).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+
+// ---------- Dados ----------
+// Atividade: { id, text, date (dia planejado), done, doneDate, createdAt, updatedAt }
+const LS_TASKS = 'atividades.tasks.v1';
+const LS_CFG = 'atividades.firebase.v1';
+let tasks = new Map();
+try { for (const t of JSON.parse(store.get(LS_TASKS) || '[]')) tasks.set(t.id, t); } catch {}
+let day = today();
+let cloud = null; // { put(t), del(id) } quando conectado ao Firebase
+
+const saveLocal = () => store.set(LS_TASKS, JSON.stringify([...tasks.values()]));
+function putTask(t) {
+  t.updatedAt = Date.now();
+  tasks.set(t.id, t); saveLocal(); render();
+  if (cloud) cloud.put(t);
+}
+function deleteTask(id) {
+  tasks.delete(id); saveLocal(); render();
+  if (cloud) cloud.del(id);
+}
+
+// Uma atividade aparece no dia D se foi planejada para D, ou se foi planejada antes
+// e ainda não tinha sido concluída em D (ela "passa" para os dias seguintes).
+function tasksFor(D) {
+  const T = today();
+  const out = [];
+  for (const t of tasks.values()) {
+    let show = t.date === D;
+    if (!show && t.date < D && D <= T) show = !t.done || t.doneDate >= D;
+    if (!show) continue;
+    const doneHere = t.done && t.doneDate <= D;
+    out.push({ t, doneHere, carried: t.date < D });
+  }
+  out.sort((a, b) => (a.t.date.localeCompare(b.t.date)) || (a.t.createdAt - b.t.createdAt));
+  return out;
+}
+
+// ---------- Interface ----------
+const lists = $('#lists');
+function render() {
+  const T = today();
+  const rel = day === T ? 'Hoje' : day === addDays(T, -1) ? 'Ontem' : day === addDays(T, 1) ? 'Amanhã' : '';
+  $('#relLabel').textContent = rel;
+  const ld = longDate(day); $('#longLabel').textContent = ld.charAt(0).toUpperCase() + ld.slice(1);
+  $('#dateInput').value = day;
+  $('#goToday').classList.toggle('show', day !== T);
+
+  const items = tasksFor(day);
+  const pending = items.filter((x) => !x.doneHere);
+  const done = items.filter((x) => x.doneHere);
+  $('#progText').textContent = `${done.length} de ${items.length} concluídas`;
+  $('#progBar').style.width = items.length ? `${(done.length / items.length) * 100}%` : '0';
+
+  if (!items.length) {
+    lists.innerHTML = `<div class="empty">Nenhuma atividade para este dia.<br>Escreva abaixo ou toque no microfone.</div>`;
+    return;
+  }
+  const row = ({ t, doneHere, carried }) => {
+    let tag = '';
+    if (carried && !doneHere) tag = `<span class="tag">Pendente desde ${short(t.date)}</span>`;
+    else if (doneHere && t.doneDate !== t.date) tag = `<span class="tag ok">Planejada ${short(t.date)} · feita ${short(t.doneDate)}</span>`;
+    return `<li class="task ${doneHere ? 'done' : ''}" data-id="${t.id}">
+      <button class="check" data-act="toggle" aria-label="${doneHere ? 'Desmarcar' : 'Marcar como feita'}"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></button>
+      <div class="body" data-act="edit"><div class="txt">${esc(t.text)}</div>${tag}</div>
+      <button class="icon-btn more" data-act="edit" aria-label="Opções"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+    </li>`;
+  };
+  lists.innerHTML =
+    (pending.length ? `<h2 class="sec">A fazer (${pending.length})</h2><ul class="list">${pending.map(row).join('')}</ul>` : '') +
+    (done.length ? `<h2 class="sec">Concluídas (${done.length})</h2><ul class="list">${done.map(row).join('')}</ul>` : '');
+}
+
+lists.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const id = el.closest('li').dataset.id; const t = tasks.get(id); if (!t) return;
+  if (el.dataset.act === 'toggle') {
+    const doneHere = t.done && t.doneDate <= day;
+    if (doneHere) putTask({ ...t, done: false, doneDate: null });
+    else putTask({ ...t, done: true, doneDate: day < t.date ? t.date : day });
+  } else openTask(t);
+});
+
+const go = (d) => { day = d; render(); };
+$('#prevDay').onclick = () => go(addDays(day, -1));
+$('#nextDay').onclick = () => go(addDays(day, 1));
+$('#goToday').onclick = () => go(today());
+$('#pickDay').onclick = () => { const i = $('#dateInput'); try { i.showPicker(); } catch { i.focus(); i.click(); } };
+$('#dateInput').onchange = (e) => e.target.value && go(e.target.value);
+
+// Virada do dia com o app aberto
+let lastToday = today();
+setInterval(() => { const T = today(); if (T !== lastToday) { if (day === lastToday) day = T; lastToday = T; render(); } }, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { const T = today(); if (T !== lastToday) { if (day === lastToday) day = T; lastToday = T; } render(); } });
+
+// ---------- Adicionar ----------
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+function addTexts(raw) {
+  const parts = raw.split(/\s*(?:próxima atividade|proxima atividade|\n)\s*/i).map((s) => s.trim().replace(/[.,;]+$/, '')).filter(Boolean);
+  const added = [];
+  for (const p of parts) {
+    const t = { id: newId(), text: cap(p), date: day, done: false, doneDate: null, createdAt: Date.now() + added.length, updatedAt: 0 };
+    putTask(t); added.push(t.id);
+  }
+  return added;
+}
+$('#addForm').onsubmit = (e) => {
+  e.preventDefault();
+  const v = $('#newTask').value.trim(); if (!v) return;
+  addTexts(v); $('#newTask').value = '';
+};
+
+// ---------- Voz ----------
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const hint = $('#hint'); const defaultHint = hint.textContent;
+let rec = null;
+$('#micBtn').onclick = () => {
+  if (rec) { rec.stop(); return; }
+  if (!SR) { toast('Este navegador não tem reconhecimento de voz. Use o microfone do teclado.'); $('#newTask').focus(); return; }
+  if (!navigator.onLine) toast('Sem internet a voz pode não funcionar. Se falhar, use o microfone do teclado.');
+  let finalText = '';
+  rec = new SR();
+  rec.lang = 'pt-BR'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+  rec.onresult = (e) => {
+    let interim = ''; finalText = '';
+    for (const r of e.results) { if (r.isFinal) finalText += r[0].transcript; else interim += r[0].transcript; }
+    $('#newTask').value = (finalText + ' ' + interim).trim();
+  };
+  rec.onerror = (e) => {
+    const m = { 'not-allowed': 'Permita o uso do microfone para este app.', 'service-not-allowed': 'Permita o uso do microfone para este app.', network: 'A voz precisa de internet. Use o microfone do teclado.', 'no-speech': 'Não ouvi nada. Tente de novo.', 'audio-capture': 'Nenhum microfone encontrado.' }[e.error];
+    if (m) toast(m);
+  };
+  rec.onend = () => {
+    rec = null; $('#micBtn').classList.remove('on'); hint.textContent = defaultHint;
+    const v = (finalText || $('#newTask').value).trim();
+    if (v) {
+      const ids = addTexts(v); $('#newTask').value = '';
+      toast(ids.length > 1 ? `${ids.length} atividades adicionadas` : `Adicionada: ${tasks.get(ids[0])?.text}`, 'Desfazer', () => ids.forEach(deleteTask));
+    }
+  };
+  try { rec.start(); $('#micBtn').classList.add('on'); hint.textContent = 'Ouvindo... fale a atividade. Toque de novo para parar.'; }
+  catch { rec = null; toast('Não foi possível iniciar o microfone.'); }
+};
+
+// ---------- Toast ----------
+let toastTimer;
+function toast(text, actionLabel, action) {
+  $('#toastText').textContent = text;
+  const b = $('#toastAction');
+  b.hidden = !actionLabel; b.textContent = actionLabel || '';
+  b.onclick = () => { action && action(); $('#toast').classList.remove('show'); };
+  $('#toast').classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('show'), actionLabel ? 6000 : 3500);
+}
+
+// ---------- Editar atividade ----------
+let editing = null;
+function openTask(t) {
+  editing = t.id;
+  $('#editText').value = t.text; $('#editDate').value = t.date;
+  $('#taskDlg').showModal();
+}
+$('#taskDlg').addEventListener('close', () => {
+  const t = tasks.get(editing); const act = $('#taskDlg').returnValue; editing = null;
+  if (!t) return;
+  if (act === 'save') {
+    const text = $('#editText').value.trim(); const date = $('#editDate').value || t.date;
+    if (text) putTask({ ...t, text, date });
+  } else if (act === 'tomorrow') {
+    putTask({ ...t, date: addDays(today(), 1), done: false, doneDate: null });
+    toast('Passada para amanhã');
+  } else if (act === 'delete') {
+    deleteTask(t.id);
+    toast('Atividade excluída', 'Desfazer', () => putTask(t));
+  }
+});
+
+// ---------- Configurações ----------
+const settings = $('#settingsDlg');
+$('#openSettings').onclick = () => { refreshSettings(); settings.showModal(); };
+$('#syncPill').onclick = $('#openSettings').onclick;
+$('#closeSettings').onclick = () => settings.close();
+
+function parseCfg(txt) {
+  const keys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId', 'measurementId'];
+  const cfg = {};
+  for (const k of keys) { const m = txt.match(new RegExp(`["']?${k}["']?\\s*:\\s*["']([^"']+)["']`)); if (m) cfg[k] = m[1]; }
+  return cfg.apiKey && cfg.projectId && cfg.appId ? cfg : null;
+}
+const getCfg = () => { try { return JSON.parse(store.get(LS_CFG)); } catch { return null; } };
+
+function refreshSettings() {
+  const has = !!getCfg();
+  $('#cloudNoCfg').hidden = has; $('#cloudCfg').hidden = !has;
+  const u = fb?.auth?.currentUser;
+  $('#signedOut').hidden = !!u; $('#signedIn').hidden = !u;
+  if (u) $('#userEmail').textContent = u.email;
+}
+$('#saveCfg').onclick = () => {
+  const cfg = parseCfg($('#cfgText').value);
+  if (!cfg) { toast('Configuração inválida. Copie o bloco firebaseConfig inteiro.'); return; }
+  store.set(LS_CFG, JSON.stringify(cfg)); location.reload();
+};
+$('#removeCfg').onclick = () => {
+  if (!confirm('Remover a sincronização deste aparelho? As atividades continuam salvas aqui.')) return;
+  store.del(LS_CFG); location.reload();
+};
+
+// Exportar / importar
+$('#exportBtn').onclick = () => {
+  const blob = new Blob([JSON.stringify({ app: 'minhas-atividades', exportedAt: new Date().toISOString(), tasks: [...tasks.values()] }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `atividades-${today()}.json`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+$('#importBtn').onclick = () => $('#importFile').click();
+$('#importFile').onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const data = JSON.parse(await f.text()); let n = 0;
+    for (const t of data.tasks || []) {
+      if (!t.id || !t.text || !t.date) continue;
+      const cur = tasks.get(t.id);
+      if (!cur || (t.updatedAt || 0) > (cur.updatedAt || 0)) { tasks.set(t.id, t); if (cloud) cloud.put(t); n++; }
+    }
+    saveLocal(); render(); toast(`${n} atividades importadas`);
+  } catch { toast('Arquivo inválido.'); }
+  e.target.value = '';
+};
+
+// ---------- Sincronização (Firebase) ----------
+const FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
+let fb = null; let unsub = null;
+function setSync(state, text) {
+  const p = $('#syncPill'); p.className = 'pill ' + ({ synced: 'ok', pending: 'wait', offline: 'wait', connecting: 'wait', error: 'err', signedout: 'err' }[state] || '');
+  $('#syncText').textContent = text || { local: 'Só neste aparelho', synced: 'Sincronizado', pending: 'Enviando...', offline: 'Offline · salvo aqui', connecting: 'Conectando...', signedout: 'Entre na conta', error: 'Erro na sincronização' }[state];
+}
+const authErr = (e) => ({
+  'auth/invalid-credential': 'E-mail ou senha incorretos.', 'auth/wrong-password': 'E-mail ou senha incorretos.', 'auth/user-not-found': 'Conta não encontrada. Use "Criar conta".',
+  'auth/email-already-in-use': 'Este e-mail já tem conta. Use "Entrar".', 'auth/weak-password': 'A senha precisa ter pelo menos 6 caracteres.',
+  'auth/invalid-email': 'E-mail inválido.', 'auth/network-request-failed': 'Sem internet. Para entrar a primeira vez é preciso conexão.',
+  'auth/operation-not-allowed': 'Ative "E-mail/senha" no Firebase (Authentication).',
+}[e.code] || e.message);
+
+async function startCloud() {
+  const cfg = getCfg();
+  if (!cfg) { setSync('local'); return; }
+  setSync('connecting');
+  try {
+    const [{ initializeApp }, A, F] = await Promise.all([import(FB + 'firebase-app.js'), import(FB + 'firebase-auth.js'), import(FB + 'firebase-firestore.js')]);
+    const app = initializeApp(cfg);
+    const auth = A.getAuth(app);
+    const db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) });
+    fb = { A, F, auth, db };
+    A.onAuthStateChanged(auth, (user) => { user ? attach(user) : detach(); refreshSettings(); });
+  } catch (e) {
+    console.error(e); setSync('error', navigator.onLine ? 'Erro na sincronização' : 'Offline · salvo aqui');
+  }
+}
+function attach(user) {
+  const { F, db } = fb;
+  const col = F.collection(db, 'users', user.uid, 'tasks');
+  cloud = {
+    put: (t) => F.setDoc(F.doc(col, t.id), t).catch((e) => { console.error(e); setSync('error'); }),
+    del: (id) => F.deleteDoc(F.doc(col, id)).catch((e) => { console.error(e); setSync('error'); }),
+  };
+  const migKey = 'atividades.migrated.' + user.uid;
+  let first = true;
+  unsub = F.onSnapshot(col, { includeMetadataChanges: true }, (snap) => {
+    if (first) {
+      first = false;
+      // Na primeira vez, envia as atividades que já existiam neste aparelho.
+      if (!store.get(migKey)) {
+        const ids = new Set(snap.docs.map((d) => d.id));
+        for (const t of tasks.values()) if (!ids.has(t.id)) cloud.put(t);
+        store.set(migKey, '1');
+        return;
+      }
+    }
+    tasks = new Map(snap.docs.map((d) => [d.id, d.data()]));
+    saveLocal(); render();
+    setSync(snap.metadata.hasPendingWrites ? 'pending' : snap.metadata.fromCache ? 'offline' : 'synced');
+  }, (e) => { console.error(e); setSync('error', e.code === 'permission-denied' ? 'Sem permissão (regras)' : 'Erro na sincronização'); });
+}
+function detach() {
+  if (unsub) unsub(); unsub = null; cloud = null; setSync('signedout');
+}
+async function doAuth(kind) {
+  const email = $('#email').value.trim(); const pass = $('#password').value;
+  const msg = $('#authMsg'); msg.className = 'msg'; msg.textContent = 'Aguarde...';
+  try {
+    const fn = kind === 'up' ? fb.A.createUserWithEmailAndPassword : fb.A.signInWithEmailAndPassword;
+    await fn(fb.auth, email, pass);
+    msg.textContent = 'Pronto! Sincronização ativada.'; $('#password').value = '';
+  } catch (e) { msg.className = 'msg err'; msg.textContent = authErr(e); }
+}
+$('#signIn').onclick = () => fb ? doAuth('in') : toast('Aguarde a conexão com o Firebase.');
+$('#signUp').onclick = () => fb ? doAuth('up') : toast('Aguarde a conexão com o Firebase.');
+$('#signOut').onclick = async () => { await fb.A.signOut(fb.auth); $('#authMsg').textContent = ''; };
+window.addEventListener('online', () => { if (cloud) setSync('pending', 'Sincronizando...'); else if (getCfg() && !fb) startCloud(); });
+window.addEventListener('offline', () => { if (getCfg()) setSync('offline'); });
+
+// ---------- Início ----------
+render();
+startCloud();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
