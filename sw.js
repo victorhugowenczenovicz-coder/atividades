@@ -1,5 +1,5 @@
 // Service worker: guarda o app no aparelho para abrir sem internet.
-const VERSION = 'atividades-v3';
+const VERSION = 'atividades-v4';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 const FIREBASE_CDN = 'https://www.gstatic.com/firebasejs/';
 
@@ -13,6 +13,16 @@ self.addEventListener('activate', (e) => {
       .then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+// Tocar no lembrete abre o app na atividade.
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const id = e.notification.data && e.notification.data.id;
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    for (const c of list) { c.postMessage({ openTask: id }); return c.focus(); }
+    return self.clients.openWindow('./index.html' + (id ? '?t=' + encodeURIComponent(id) : ''));
+  }));
 });
 
 self.addEventListener('fetch', (e) => {

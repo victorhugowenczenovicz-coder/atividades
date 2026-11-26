@@ -14,20 +14,22 @@
   :root {
     --bg: #f6f7f5; --surface: #ffffff; --surface-2: #eef1ec; --text: #1b1f1c; --muted: #66706a;
     --line: #dde2dc; --accent: #166534; --accent-soft: #dcfce7; --accent-text: #ffffff;
-    --warn: #9a3412; --warn-soft: #ffedd5; --danger: #b91c1c; --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+    --warn: #9a3412; --warn-soft: #ffedd5; --info: #1e40af; --info-soft: #dbeafe; --danger: #b91c1c;
+    --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #111412; --surface: #1a1f1c; --surface-2: #232a25; --text: #e7ece8; --muted: #9aa59e;
       --line: #2e3631; --accent: #4ade80; --accent-soft: #163a24; --accent-text: #0b1a10;
-      --warn: #fdba74; --warn-soft: #3a2414; --danger: #f87171; --shadow: 0 1px 2px rgba(0,0,0,.4);
+      --warn: #fdba74; --warn-soft: #3a2414; --info: #93c5fd; --info-soft: #172554; --danger: #f87171;
+      --shadow: 0 1px 2px rgba(0,0,0,.4);
     }
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--text); }
   body { font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; min-height: 100dvh; -webkit-tap-highlight-color: transparent; }
   button { font: inherit; color: inherit; cursor: pointer; }
-  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px calc(120px + env(safe-area-inset-bottom)); }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px calc(130px + env(safe-area-inset-bottom)); }
 
   header.top { display: flex; align-items: center; gap: 8px; padding: calc(12px + env(safe-area-inset-top)) 0 8px; }
   header.top h1 { font-size: 18px; margin: 0; flex: 1; font-weight: 650; }
@@ -57,11 +59,15 @@
   .check svg { width: 18px; height: 18px; stroke-width: 3; opacity: 0; }
   li.done .check { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
   li.done .check svg { opacity: 1; }
-  .body { flex: 1; min-width: 0; }
+  .body { flex: 1; min-width: 0; cursor: pointer; }
   .txt { word-wrap: break-word; white-space: pre-wrap; }
   li.done .txt { text-decoration: line-through; color: var(--muted); }
-  .tag { display: inline-block; margin-top: 4px; font-size: 12px; padding: 2px 8px; border-radius: 6px; background: var(--warn-soft); color: var(--warn); }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 2px 8px; border-radius: 6px; background: var(--surface-2); color: var(--muted); }
+  .tag.late { background: var(--warn-soft); color: var(--warn); }
   .tag.ok { background: var(--accent-soft); color: var(--accent); }
+  .tag.time { background: var(--info-soft); color: var(--info); font-weight: 600; }
+  .tag svg { width: 13px; height: 13px; }
   .more { flex: none; width: 32px; height: 32px; margin: -2px -4px 0 0; color: var(--muted); }
   .empty { text-align: center; color: var(--muted); padding: 40px 16px; }
 
@@ -76,11 +82,11 @@
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,.5);} 70% { box-shadow: 0 0 0 14px rgba(220,38,38,0);} 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0);} }
   .hint { max-width: 640px; margin: 6px auto 0; font-size: 12px; color: var(--muted); min-height: 16px; }
 
-  .toast { position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 12px; font-size: 14px; display: flex; gap: 12px; align-items: center; opacity: 0; pointer-events: none; transition: .2s; max-width: calc(100% - 32px); z-index: 20; }
+  .toast { position: fixed; left: 50%; bottom: calc(120px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 12px; font-size: 14px; display: flex; gap: 12px; align-items: center; opacity: 0; pointer-events: none; transition: .2s; max-width: calc(100% - 32px); z-index: 20; }
   .toast.show { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
-  .toast button { border: 0; background: transparent; color: var(--accent-soft); font-weight: 700; padding: 0; }
+  .toast button { border: 0; background: transparent; color: var(--accent-soft); font-weight: 700; padding: 0; white-space: nowrap; }
 
-  dialog { border: 0; border-radius: 16px; padding: 0; background: var(--surface); color: var(--text); width: min(520px, calc(100% - 32px)); max-height: calc(100dvh - 48px); box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+  dialog { border: 0; border-radius: 16px; padding: 0; background: var(--surface); color: var(--text); width: min(560px, calc(100% - 24px)); max-height: calc(100dvh - 32px); box-shadow: 0 10px 40px rgba(0,0,0,.3); }
   dialog::backdrop { background: rgba(0,0,0,.45); }
   .dlg { padding: 20px; display: grid; gap: 14px; }
   .dlg h3 { margin: 0; font-size: 18px; }
@@ -88,15 +94,30 @@
   .dlg p { margin: 0; color: var(--muted); font-size: 14px; }
   .dlg label { display: grid; gap: 4px; font-size: 14px; }
   .dlg input, .dlg textarea { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); width: 100%; }
-  .dlg textarea { min-height: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
-  .row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .btn { border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 10px 14px; font-weight: 550; }
+  .dlg textarea { min-height: 70px; resize: vertical; }
+  .dlg textarea.code { min-height: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  .dlg label.inline { display: flex; align-items: center; gap: 10px; }
+  .dlg label.inline input { width: 20px; height: 20px; accent-color: var(--accent); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn { border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 10px 14px; font-weight: 550; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 15px; }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
   .btn.danger { color: var(--danger); }
-  .btn.block { width: 100%; text-align: left; }
+  .btn.small { padding: 6px 10px; font-size: 13px; }
+  .btn svg { width: 18px; height: 18px; }
   .sep { height: 1px; background: var(--line); margin: 4px 0; }
   .msg { font-size: 14px; }
   .msg.err { color: var(--danger); }
+
+  .photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+  .photos button.ph { padding: 0; border: 0; border-radius: 10px; overflow: hidden; aspect-ratio: 1; background: var(--surface-2); }
+  .photos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photos .addph { border: 2px dashed var(--line); border-radius: 10px; aspect-ratio: 1; display: grid; place-items: center; color: var(--muted); font-size: 12px; text-align: center; background: transparent; }
+  .photos .loading { aspect-ratio: 1; border-radius: 10px; background: var(--surface-2); display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+  #viewer { width: min(900px, calc(100% - 16px)); background: #000; }
+  #viewer img { display: block; width: 100%; max-height: calc(100dvh - 110px); object-fit: contain; }
+  #viewer .row { padding: 10px; justify-content: space-between; }
+  #viewer .btn { background: #222; color: #fff; border-color: #333; }
 </style>
 </head>
 <body>
@@ -135,25 +156,52 @@
       <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
     </button>
   </form>
-  <div class="hint" id="hint">Toque no microfone e fale. Para várias de uma vez, diga "próxima atividade" entre elas.</div>
+  <div class="hint" id="hint">Ex.: "amanhã às 9 ligar para o fornecedor". Para várias, diga "próxima atividade" entre elas.</div>
 </div>
 
 <div class="toast" id="toast"><span id="toastText"></span><button id="toastAction" hidden></button></div>
 
-<!-- Ações da atividade -->
+<!-- Detalhes da atividade -->
 <dialog id="taskDlg">
   <form method="dialog" class="dlg" id="taskForm">
-    <h3>Atividade</h3>
-    <label>Texto<input id="editText"></label>
-    <label>Dia planejado<input type="date" id="editDate"></label>
+    <div class="row" style="justify-content:space-between">
+      <h3>Detalhes da atividade</h3>
+      <button class="icon-btn" value="cancel" aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <label>Atividade<textarea id="editText" rows="2" style="min-height:0"></textarea></label>
+    <div class="grid2">
+      <label>Dia<input type="date" id="editDate"></label>
+      <label>Horário<input type="time" id="editTime"></label>
+    </div>
+    <label class="inline"><input type="checkbox" id="editRemind"> Avisar no horário (lembrete)</label>
+    <div class="row" id="calRow" hidden>
+      <span style="font-size:13px;color:var(--muted);flex-basis:100%">Para aviso garantido mesmo com o app fechado, coloque na agenda do celular:</span>
+      <a class="btn small" id="gcalLink" target="_blank" rel="noopener">Google Agenda</a>
+      <button type="button" class="btn small" id="icsBtn">Agenda (.ics)</button>
+    </div>
+    <label>Observações<textarea id="editNotes" rows="3" placeholder="Detalhes, medidas, contatos..."></textarea></label>
+    <div>
+      <div style="font-size:14px;margin-bottom:6px">Fotos</div>
+      <div class="photos" id="photoGrid"></div>
+      <input type="file" id="photoInput" accept="image/*" multiple hidden>
+    </div>
     <div class="row">
-      <button class="btn primary" value="save">Salvar</button>
-      <button class="btn" value="tomorrow" type="submit">Passar para amanhã</button>
+      <button class="btn primary" value="save" id="saveTask">Salvar</button>
+      <button class="btn" value="tomorrow">Passar para amanhã</button>
       <button class="btn" value="cancel">Cancelar</button>
     </div>
     <div class="sep"></div>
-    <button class="btn danger" value="delete">Excluir atividade</button>
+    <button class="btn danger" value="delete" style="justify-self:start">Excluir atividade</button>
   </form>
+</dialog>
+
+<!-- Ver foto -->
+<dialog id="viewer">
+  <img id="viewerImg" alt="Foto da atividade">
+  <div class="row">
+    <button class="btn" id="delPhoto">Excluir foto</button>
+    <button class="btn" id="closeViewer">Fechar</button>
+  </div>
 </dialog>
 
 <!-- Configurações -->
@@ -166,8 +214,8 @@
 
     <h4>Sincronizar computador e celular</h4>
     <div id="cloudNoCfg">
-      <p>Cole aqui a configuração do Firebase (veja o arquivo GUIA). Faça isso uma vez em cada aparelho.</p>
-      <label style="margin-top:8px"><textarea id="cfgText" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, authDomain: &quot;...&quot;, projectId: &quot;...&quot;, ... };"></textarea></label>
+      <p>Cole aqui a configuração do Firebase.</p>
+      <label style="margin-top:8px"><textarea class="code" id="cfgText" placeholder="const firebaseConfig = { ... };"></textarea></label>
       <div class="row" style="margin-top:8px"><button class="btn primary" id="saveCfg">Salvar configuração</button></div>
     </div>
     <div id="cloudCfg" hidden>
@@ -183,7 +231,7 @@
         </div>
       </div>
       <div id="signedIn" hidden>
-        <p>Conectado como <b id="userEmail"></b>. As atividades sincronizam sozinhas quando houver internet.</p>
+        <p>Conectado como <b id="userEmail"></b>. As atividades e fotos sincronizam sozinhas quando houver internet.</p>
         <div class="row" style="margin-top:8px"><button class="btn" id="signOut">Sair da conta</button></div>
       </div>
       <p class="msg" id="authMsg"></p>
@@ -191,8 +239,13 @@
     </div>
 
     <div class="sep"></div>
+    <h4>Lembretes</h4>
+    <p>O app avisa no horário enquanto estiver aberto ou em segundo plano. Para ter aviso garantido com o app fechado, use o botão "Google Agenda" nos detalhes da atividade.</p>
+    <div class="row"><button class="btn" id="notifBtn">Ativar notificações</button><span class="msg" id="notifState"></span></div>
+
+    <div class="sep"></div>
     <h4>Cópia de segurança</h4>
-    <p>Salve um arquivo com todas as atividades, ou restaure de um arquivo.</p>
+    <p>Salve um arquivo com todas as atividades (sem as fotos), ou restaure de um arquivo.</p>
     <div class="row">
       <button class="btn" id="exportBtn">Exportar arquivo</button>
       <button class="btn" id="importBtn">Importar arquivo</button>
@@ -201,12 +254,13 @@
 
     <div class="sep"></div>
     <h4>Comando de voz</h4>
-    <p>O microfone do app usa o reconhecimento de voz do navegador (Chrome ou Edge), que normalmente precisa de internet. Sem internet, toque na caixa de texto e use o microfone do teclado do celular.</p>
+    <p>Fale a atividade com dia e hora, por exemplo: "amanhã às 14h vistoria no bloco B", "sexta-feira às 9 ligar para o engenheiro", "dia 5 de dezembro entregar medição", "me lembre às 4 da tarde de pedir areia".</p>
+    <p>O microfone do app usa o reconhecimento do Chrome/Edge, que normalmente precisa de internet. Sem internet, use o microfone do teclado do celular: o texto com dia e hora funciona do mesmo jeito.</p>
   </div>
 </dialog>
 
 <script type="module">
-// ---------- Utilidades de data ----------
+// ---------- Utilidades ----------
 const $ = (s) => document.querySelector(s);
 const pad = (n) => String(n).padStart(2, '0');
 const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -215,22 +269,125 @@ const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); retu
 const today = () => ymd(new Date());
 const short = (s) => { const d = parse(s); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`; };
 const longDate = (s) => parse(s).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+const weekdayShort = (s) => parse(s).toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
 const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const norm = (s) => s.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
   del(k) { try { localStorage.removeItem(k); } catch {} },
 };
+const ICON = {
+  clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  bell: '<svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>',
+  note: '<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>',
+  cam: '<svg viewBox="0 0 24 24"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/></svg>',
+};
+
+// ---------- Entender dia e hora no texto ----------
+const NUM = { um: 1, uma: 1, primeiro: 1, dois: 2, duas: 2, tres: 3, quatro: 4, cinco: 5, seis: 6, sete: 7, oito: 8, nove: 9, dez: 10, onze: 11, doze: 12, treze: 13, catorze: 14, quatorze: 14, quinze: 15, dezesseis: 16, dezessete: 17, dezoito: 18, dezenove: 19, vinte: 20, trinta: 30, quarenta: 40, cinquenta: 50 };
+const NW = '(?:\\d{1,2}|(?:vinte|trinta|quarenta|cinquenta)(?:\\s+e\\s+(?:um|uma|dois|duas|três|tres|quatro|cinco|seis|sete|oito|nove))?|uma|um|primeiro|duas|dois|três|tres|quatro|cinco|seis|sete|oito|nove|dez|onze|doze|treze|catorze|quatorze|quinze|dezesseis|dezessete|dezoito|dezenove)';
+const MONTHS = { janeiro: 1, fevereiro: 2, marco: 3, abril: 4, maio: 5, junho: 6, julho: 7, agosto: 8, setembro: 9, outubro: 10, novembro: 11, dezembro: 12 };
+const WD = { domingo: 0, segunda: 1, terca: 2, quarta: 3, quinta: 4, sexta: 5, sabado: 6 };
+const toNum = (s) => {
+  if (s == null) return null;
+  s = norm(s.trim());
+  if (/^\d+$/.test(s)) return +s;
+  if (s === 'meia') return 30;
+  let n = 0;
+  for (const p of s.split(/\s+e\s+/)) { if (NUM[p] == null) return null; n += NUM[p]; }
+  return n;
+};
+
+function parseWhen(input) {
+  const L = '(?<![\\p{L}\\d])', R = '(?![\\p{L}\\d])';
+  const PRE = '(?:(?:para|pra|no|na|em|até|ate)\\s+)?';
+  const PER = '(?:\\s+(?:da|de|à|a)\\s+(manhã|manha|tarde|noite|madrugada))?';
+  const rx = (src) => new RegExp(L + src + R, 'iu');
+  const T = today();
+  let s = ' ' + input + ' ';
+  let date = null, time = null, remind = false;
+  const take = (re, fn) => {
+    const m = s.match(re); if (!m) return false;
+    if (fn(m) === false) return false;
+    s = s.slice(0, m.index) + ' ' + s.slice(m.index + m[0].length);
+    return true;
+  };
+  const setTime = (h, min, per) => {
+    if (h == null || min == null) return false;
+    const p = norm(per || '');
+    if ((p === 'tarde' || p === 'noite') && h < 12) h += 12;
+    if ((p === 'manha' || p === 'madrugada') && h === 12) h = 0;
+    if (!p && h >= 1 && h <= 6) h += 12; // "às 2" no horário de trabalho = 14h
+    if (h > 23 || min > 59) return false;
+    time = `${pad(h)}:${pad(min)}`;
+  };
+  const mkDate = (d, m, y) => {
+    if (!d) return false;
+    const t = parse(T);
+    let year = y ? (+y < 100 ? 2000 + +y : +y) : t.getFullYear();
+    let month = m || t.getMonth() + 1;
+    let dt = new Date(year, month - 1, d);
+    if (!m && dt < t) dt = new Date(year, month, d);            // dia já passou: próximo mês
+    else if (m && !y && dt < t) dt = new Date(year + 1, month - 1, d); // mês já passou: próximo ano
+    if (dt.getDate() !== d) return false;
+    date = ymd(dt);
+  };
+
+  // Pedido de lembrete
+  take(rx('(?:me\\s+(?:lembr(?:e|a|ar)|avis(?:e|a|ar))|lembrete)(?:\\s+(?:de|que|para|pra))?'), () => { remind = true; });
+
+  // Hora
+  take(rx('(?:(?:às|as|ao|a)\\s+)?(meio[-\\s]dia|meia[-\\s]noite)(\\s+e\\s+meia)?'), (m) =>
+    setTime(/meio/i.test(m[1]) ? 12 : 0, m[2] ? 30 : 0, 'x'))
+  || take(rx('(?:(?:às|as)\\s+)?(\\d{1,2})(?::|h)(\\d{2})?(?:\\s*(?:min|hs|horas?))?' + PER), (m) =>
+    setTime(+m[1], m[2] ? +m[2] : 0, m[3]))
+  || take(rx('(?:às\\s+(' + NW + ')|as\\s+(\\d{1,2}))(?:\\s+horas?)?(?:\\s+e\\s+(meia|' + NW + ')(?:\\s+minutos?)?)?' + PER), (m) =>
+    setTime(toNum(m[1] || m[2]), m[3] ? toNum(m[3]) : 0, m[4]))
+  || take(rx('(' + NW + ')\\s+horas?(?:\\s+e\\s+(meia|' + NW + ')(?:\\s+minutos?)?)?' + PER), (m) =>
+    setTime(toNum(m[1]), m[2] ? toNum(m[2]) : 0, m[3]));
+
+  // Dia
+  take(rx(PRE + 'depois\\s+de\\s+amanh[ãa]'), () => { date = addDays(T, 2); })
+  || take(rx(PRE + 'amanh[ãa]'), () => { date = addDays(T, 1); })
+  || take(rx(PRE + 'hoje'), () => { date = T; })
+  || take(rx('(?:daqui|dentro\\s+de)\\s+(?:a\\s+)?(' + NW + ')\\s+dias?'), (m) => { const n = toNum(m[1]); if (n == null) return false; date = addDays(T, n); })
+  || take(rx(PRE + '(?:a\\s+)?(?:semana\\s+que\\s+vem|pr[óo]xima\\s+semana)'), () => { const g = parse(T).getDay(); date = addDays(T, ((8 - g) % 7) || 7); })
+  || take(rx('(?:(?:para|pra|na|no|nesta|neste|esta|este|até|ate|pr[óo]xima|pr[óo]ximo)\\s+(?:(?:pr[óo]xima|pr[óo]ximo)\\s+)?(segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)(?:[-\\s]feira)?|(segunda|ter[çc]a|quarta|quinta|sexta)[-\\s]feira|(s[áa]bado|domingo))(?:\\s+que\\s+vem)?'), (m) => {
+      const w = WD[norm(m[1] || m[2] || m[3])]; const cur = parse(T).getDay();
+      date = addDays(T, ((w - cur + 7) % 7) || 7);
+    })
+  || take(rx(PRE + '(?:dia\\s+)?(\\d{1,2})/(\\d{1,2})(?:/(\\d{2,4}))?'), (m) => mkDate(+m[1], +m[2], m[3]))
+  || take(rx(PRE + '(?:dia\\s+)?(' + NW + ')\\s+de\\s+(janeiro|fevereiro|mar[çc]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)(?:\\s+de\\s+(\\d{4}))?'), (m) => mkDate(toNum(m[1]), MONTHS[norm(m[2])], m[3]))
+  || take(rx(PRE + 'dia\\s+(' + NW + ')'), (m) => mkDate(toNum(m[1]), null, null));
+
+  if (date || time) take(rx('(?:de|pela|à|a|da)\\s+(?:manhã|manha|tarde|noite)'), () => {});
+
+  // Limpeza do texto
+  let text = s.replace(/\s+/g, ' ').trim();
+  let prev;
+  do {
+    prev = text;
+    text = text.replace(/^[,;:.\-–]+\s*/, '').replace(/\s*[,;:\-–]+$/, '')
+      .replace(/^(?:e|de|que|para|pra|às|as|no|na|em)\s+/i, '')
+      .replace(/\s+(?:e|de|que|para|pra|às|as|no|na|em|até)$/i, '').trim();
+  } while (text !== prev);
+  if (!text) text = input.trim();
+  return { text: cap(text), date, time, remind: remind || !!time };
+}
+window.__parseWhen = parseWhen; // usado nos testes
 
 // ---------- Dados ----------
-// Atividade: { id, text, date (dia planejado), done, doneDate, createdAt, updatedAt }
+// Atividade: { id, text, date, time, remind, notes, photoIds, done, doneDate, createdAt, updatedAt }
 const LS_TASKS = 'atividades.tasks.v1';
 const LS_CFG = 'atividades.firebase.v1';
+const LS_NOTIFIED = 'atividades.notified.v1';
 let tasks = new Map();
 try { for (const t of JSON.parse(store.get(LS_TASKS) || '[]')) tasks.set(t.id, t); } catch {}
 let day = today();
-let cloud = null; // { put(t), del(id) } quando conectado ao Firebase
+let cloud = null;
 
 const saveLocal = () => store.set(LS_TASKS, JSON.stringify([...tasks.values()]));
 function putTask(t) {
@@ -239,8 +396,50 @@ function putTask(t) {
   if (cloud) cloud.put(t);
 }
 function deleteTask(id) {
+  const t = tasks.get(id);
   tasks.delete(id); saveLocal(); render();
   if (cloud) cloud.del(id);
+  // Apaga as fotos depois, se a exclusão não for desfeita
+  if (t?.photoIds?.length) setTimeout(() => { if (!tasks.has(id)) t.photoIds.forEach(removePhoto); }, 8000);
+}
+
+// ---------- Fotos (guardadas no aparelho e na nuvem) ----------
+const idb = (() => {
+  let p;
+  const open = () => p || (p = new Promise((res, rej) => {
+    const r = indexedDB.open('atividades-fotos', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('photos');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  const tx = async (mode, fn) => {
+    const db = await open();
+    return new Promise((res, rej) => {
+      const t = db.transaction('photos', mode); const req = fn(t.objectStore('photos'));
+      t.oncomplete = () => res(req.result); t.onerror = () => rej(t.error);
+    });
+  };
+  return { get: (id) => tx('readonly', (s) => s.get(id)), put: (id, v) => tx('readwrite', (s) => s.put(v, id)), del: (id) => tx('readwrite', (s) => s.delete(id)) };
+})();
+async function savePhoto(p) { await idb.put(p.id, p).catch(() => {}); if (cloud) cloud.putPhoto(p); }
+async function getPhoto(id) {
+  let p = await idb.get(id).catch(() => null);
+  if (!p && cloud) { p = await cloud.getPhoto(id); if (p) idb.put(id, p).catch(() => {}); }
+  return p || null;
+}
+function removePhoto(id) { idb.del(id).catch(() => {}); if (cloud) cloud.delPhoto(id); }
+function loadImg(file) {
+  return new Promise((res, rej) => {
+    const u = URL.createObjectURL(file); const i = new Image();
+    i.onload = () => { res(i); setTimeout(() => URL.revokeObjectURL(u), 1000); };
+    i.onerror = () => rej(new Error('img')); i.src = u;
+  });
+}
+function toJpeg(img, max, q) {
+  const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', q);
 }
 
 // Uma atividade aparece no dia D se foi planejada para D, ou se foi planejada antes
@@ -252,10 +451,11 @@ function tasksFor(D) {
     let show = t.date === D;
     if (!show && t.date < D && D <= T) show = !t.done || t.doneDate >= D;
     if (!show) continue;
-    const doneHere = t.done && t.doneDate <= D;
-    out.push({ t, doneHere, carried: t.date < D });
+    out.push({ t, doneHere: t.done && t.doneDate <= D, carried: t.date < D });
   }
-  out.sort((a, b) => (a.t.date.localeCompare(b.t.date)) || (a.t.createdAt - b.t.createdAt));
+  out.sort((a, b) =>
+    (b.carried - a.carried) || (a.carried && a.t.date.localeCompare(b.t.date)) ||
+    ((a.t.time || '99') .localeCompare(b.t.time || '99')) || (a.t.createdAt - b.t.createdAt));
   return out;
 }
 
@@ -265,7 +465,7 @@ function render() {
   const T = today();
   const rel = day === T ? 'Hoje' : day === addDays(T, -1) ? 'Ontem' : day === addDays(T, 1) ? 'Amanhã' : '';
   $('#relLabel').textContent = rel;
-  const ld = longDate(day); $('#longLabel').textContent = ld.charAt(0).toUpperCase() + ld.slice(1);
+  $('#longLabel').textContent = cap(longDate(day));
   $('#dateInput').value = day;
   $('#goToday').classList.toggle('show', day !== T);
 
@@ -280,13 +480,16 @@ function render() {
     return;
   }
   const row = ({ t, doneHere, carried }) => {
-    let tag = '';
-    if (carried && !doneHere) tag = `<span class="tag">Pendente desde ${short(t.date)}</span>`;
-    else if (doneHere && t.doneDate !== t.date) tag = `<span class="tag ok">Planejada ${short(t.date)} · feita ${short(t.doneDate)}</span>`;
+    const tags = [];
+    if (t.time) tags.push(`<span class="tag time">${t.remind ? ICON.bell : ICON.clock}${t.time}</span>`);
+    if (carried && !doneHere) tags.push(`<span class="tag late">Pendente desde ${short(t.date)}</span>`);
+    else if (doneHere && t.doneDate !== t.date) tags.push(`<span class="tag ok">Planejada ${short(t.date)} · feita ${short(t.doneDate)}</span>`);
+    if (t.notes) tags.push(`<span class="tag">${ICON.note}Obs.</span>`);
+    if (t.photoIds?.length) tags.push(`<span class="tag">${ICON.cam}${t.photoIds.length}</span>`);
     return `<li class="task ${doneHere ? 'done' : ''}" data-id="${t.id}">
       <button class="check" data-act="toggle" aria-label="${doneHere ? 'Desmarcar' : 'Marcar como feita'}"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></button>
-      <div class="body" data-act="edit"><div class="txt">${esc(t.text)}</div>${tag}</div>
-      <button class="icon-btn more" data-act="edit" aria-label="Opções"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+      <div class="body" data-act="edit"><div class="txt">${esc(t.text)}</div>${tags.length ? `<div class="meta">${tags.join('')}</div>` : ''}</div>
+      <button class="icon-btn more" data-act="edit" aria-label="Detalhes"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
     </li>`;
   };
   lists.innerHTML =
@@ -311,26 +514,38 @@ $('#goToday').onclick = () => go(today());
 $('#pickDay').onclick = () => { const i = $('#dateInput'); try { i.showPicker(); } catch { i.focus(); i.click(); } };
 $('#dateInput').onchange = (e) => e.target.value && go(e.target.value);
 
-// Virada do dia com o app aberto
 let lastToday = today();
-setInterval(() => { const T = today(); if (T !== lastToday) { if (day === lastToday) day = T; lastToday = T; render(); } }, 30000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) { const T = today(); if (T !== lastToday) { if (day === lastToday) day = T; lastToday = T; } render(); } });
+const checkDayChange = () => { const T = today(); if (T !== lastToday) { if (day === lastToday) day = T; lastToday = T; } render(); };
+setInterval(checkDayChange, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { checkDayChange(); checkReminders(); } });
 
 // ---------- Adicionar ----------
-const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 function addTexts(raw) {
-  const parts = raw.split(/\s*(?:próxima atividade|proxima atividade|\n)\s*/i).map((s) => s.trim().replace(/[.,;]+$/, '')).filter(Boolean);
+  const parts = raw.split(/\s*(?:próxima atividade|proxima atividade|\n)\s*/i).map((s) => s.trim()).filter(Boolean);
   const added = [];
   for (const p of parts) {
-    const t = { id: newId(), text: cap(p), date: day, done: false, doneDate: null, createdAt: Date.now() + added.length, updatedAt: 0 };
-    putTask(t); added.push(t.id);
+    const w = parseWhen(p);
+    const t = { id: newId(), text: w.text, date: w.date || day, time: w.time || '', remind: !!w.remind && !!w.time, notes: '', photoIds: [],
+      done: false, doneDate: null, createdAt: Date.now() + added.length, updatedAt: 0 };
+    putTask(t); added.push(t);
   }
   return added;
+}
+const when = (t) => `${t.date === today() ? 'hoje' : t.date === addDays(today(), 1) ? 'amanhã' : `${weekdayShort(t.date)}, ${short(t.date)}`}${t.time ? ' às ' + t.time : ''}`;
+function announce(added) {
+  if (!added.length) return;
+  const undo = () => added.forEach((t) => deleteTask(t.id));
+  if (added.length > 1) { toast(`${added.length} atividades adicionadas`, 'Desfazer', undo); return; }
+  const t = added[0];
+  if (t.date !== day) toast(`Adicionada para ${when(t)}`, 'Ver dia', () => go(t.date));
+  else toast(t.time ? `Adicionada às ${t.time}` : `Adicionada: ${t.text}`, 'Desfazer', undo);
 }
 $('#addForm').onsubmit = (e) => {
   e.preventDefault();
   const v = $('#newTask').value.trim(); if (!v) return;
-  addTexts(v); $('#newTask').value = '';
+  const added = addTexts(v); $('#newTask').value = '';
+  if (added.some((t) => t.remind)) askNotify();
+  announce(added);
 };
 
 // ---------- Voz ----------
@@ -341,6 +556,7 @@ $('#micBtn').onclick = () => {
   if (rec) { rec.stop(); return; }
   if (!SR) { toast('Este navegador não tem reconhecimento de voz. Use o microfone do teclado.'); $('#newTask').focus(); return; }
   if (!navigator.onLine) toast('Sem internet a voz pode não funcionar. Se falhar, use o microfone do teclado.');
+  askNotify();
   let finalText = '';
   rec = new SR();
   rec.lang = 'pt-BR'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
@@ -356,12 +572,9 @@ $('#micBtn').onclick = () => {
   rec.onend = () => {
     rec = null; $('#micBtn').classList.remove('on'); hint.textContent = defaultHint;
     const v = (finalText || $('#newTask').value).trim();
-    if (v) {
-      const ids = addTexts(v); $('#newTask').value = '';
-      toast(ids.length > 1 ? `${ids.length} atividades adicionadas` : `Adicionada: ${tasks.get(ids[0])?.text}`, 'Desfazer', () => ids.forEach(deleteTask));
-    }
+    if (v) { const added = addTexts(v); $('#newTask').value = ''; announce(added); }
   };
-  try { rec.start(); $('#micBtn').classList.add('on'); hint.textContent = 'Ouvindo... fale a atividade. Toque de novo para parar.'; }
+  try { rec.start(); $('#micBtn').classList.add('on'); hint.textContent = 'Ouvindo... fale a atividade, com dia e hora se quiser.'; }
   catch { rec = null; toast('Não foi possível iniciar o microfone.'); }
 };
 
@@ -376,19 +589,104 @@ function toast(text, actionLabel, action) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('show'), actionLabel ? 6000 : 3500);
 }
 
-// ---------- Editar atividade ----------
+// ---------- Lembretes ----------
+function askNotify() {
+  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().then(refreshNotifState).catch(() => {});
+}
+function refreshNotifState() {
+  const s = !('Notification' in window) ? 'Este navegador não suporta notificações.'
+    : Notification.permission === 'granted' ? 'Notificações ativadas.'
+    : Notification.permission === 'denied' ? 'Bloqueadas. Libere nas configurações do navegador para este site.' : '';
+  $('#notifState').textContent = s;
+  $('#notifBtn').hidden = !('Notification' in window) || Notification.permission !== 'default';
+}
+$('#notifBtn').onclick = () => askNotify();
+
+async function notify(t) {
+  if (!document.hidden) toast(`Lembrete ${t.time}: ${t.text}`, 'Abrir', () => openTask(tasks.get(t.id) || t));
+  if (navigator.vibrate) try { navigator.vibrate([200, 100, 200]); } catch {}
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const opts = { body: t.text, icon: 'icon-192.png', badge: 'icon-192.png', tag: t.id, data: { id: t.id }, requireInteraction: true };
+  try {
+    const reg = await navigator.serviceWorker?.getRegistration();
+    if (reg) await reg.showNotification(`Lembrete · ${t.time}`, opts);
+    else new Notification(`Lembrete · ${t.time}`, opts);
+  } catch {}
+}
+function checkReminders() {
+  const T = today(); const now = new Date(); const hm = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  let sent; try { sent = JSON.parse(store.get(LS_NOTIFIED) || '[]'); } catch { sent = []; }
+  const set = new Set(sent); let changed = false;
+  for (const t of tasks.values()) {
+    if (!t.remind || !t.time || t.done || t.date !== T || t.time > hm) continue;
+    const key = `${t.id}@${t.date}T${t.time}`;
+    if (set.has(key)) continue;
+    set.add(key); changed = true; notify(t);
+  }
+  if (changed) store.set(LS_NOTIFIED, JSON.stringify([...set].slice(-500)));
+}
+setInterval(checkReminders, 15000);
+
+// Agenda do celular (aviso garantido mesmo com o app fechado)
+const stamp = (date, time, addMin = 0) => {
+  const [h, m] = (time || '09:00').split(':').map(Number);
+  const d = parse(date); d.setHours(h, m + addMin, 0);
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+};
+function gcalUrl(t) {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Sao_Paulo';
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(t.text) +
+    '&dates=' + stamp(t.date, t.time) + '/' + stamp(t.date, t.time, 30) + '&ctz=' + encodeURIComponent(tz) +
+    (t.notes ? '&details=' + encodeURIComponent(t.notes) : '');
+}
+function downloadIcs(t) {
+  const e = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/[,;]/g, (c) => '\\' + c).replace(/\r?\n/g, '\\n');
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Minhas Atividades//PT-BR', 'BEGIN:VEVENT',
+    `UID:${t.id}@minhas-atividades`, `DTSTAMP:${stamp(today(), `${pad(new Date().getHours())}:${pad(new Date().getMinutes())}`)}`,
+    `DTSTART:${stamp(t.date, t.time)}`, `DTEND:${stamp(t.date, t.time, 30)}`, `SUMMARY:${e(t.text)}`,
+    t.notes ? `DESCRIPTION:${e(t.notes)}` : '', 'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${e(t.text)}`, 'TRIGGER:-PT0M', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'].filter(Boolean).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  a.download = 'atividade.ics'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+// ---------- Detalhes da atividade ----------
 let editing = null;
+const formTask = () => {
+  const t = tasks.get(editing) || {};
+  return { ...t, text: $('#editText').value.trim() || t.text, date: $('#editDate').value || t.date, time: $('#editTime').value || '', notes: $('#editNotes').value };
+};
+function refreshCal() {
+  const has = !!$('#editTime').value;
+  $('#calRow').hidden = !has; $('#editRemind').disabled = !has;
+  if (!has) $('#editRemind').checked = false;
+  if (has) $('#gcalLink').href = gcalUrl(formTask());
+}
+$('#editTime').addEventListener('input', () => { if ($('#editTime').value && !$('#editRemind').dataset.touched) $('#editRemind').checked = true; refreshCal(); });
+$('#editText').addEventListener('input', refreshCal);
+$('#editNotes').addEventListener('input', refreshCal);
+$('#editDate').addEventListener('input', refreshCal);
+$('#editRemind').addEventListener('change', () => { $('#editRemind').dataset.touched = '1'; if ($('#editRemind').checked) askNotify(); });
+$('#icsBtn').onclick = () => downloadIcs(formTask());
+
 function openTask(t) {
   editing = t.id;
-  $('#editText').value = t.text; $('#editDate').value = t.date;
+  $('#editText').value = t.text; $('#editDate').value = t.date; $('#editTime').value = t.time || '';
+  $('#editRemind').checked = !!t.remind; delete $('#editRemind').dataset.touched;
+  $('#editNotes').value = t.notes || '';
+  refreshCal(); renderPhotos();
   $('#taskDlg').showModal();
 }
 $('#taskDlg').addEventListener('close', () => {
   const t = tasks.get(editing); const act = $('#taskDlg').returnValue; editing = null;
+  $('#taskDlg').returnValue = '';
   if (!t) return;
   if (act === 'save') {
-    const text = $('#editText').value.trim(); const date = $('#editDate').value || t.date;
-    if (text) putTask({ ...t, text, date });
+    const text = $('#editText').value.trim();
+    const time = $('#editTime').value || '';
+    putTask({ ...t, text: text || t.text, date: $('#editDate').value || t.date, time, remind: !!time && $('#editRemind').checked, notes: $('#editNotes').value.trim() });
+    if (time && $('#editRemind').checked) askNotify();
   } else if (act === 'tomorrow') {
     putTask({ ...t, date: addDays(today(), 1), done: false, doneDate: null });
     toast('Passada para amanhã');
@@ -398,9 +696,52 @@ $('#taskDlg').addEventListener('close', () => {
   }
 });
 
+// Fotos da atividade
+async function renderPhotos() {
+  const grid = $('#photoGrid'); const t = tasks.get(editing); if (!t) return;
+  const ids = t.photoIds || [];
+  grid.innerHTML = ids.map((id) => `<div class="loading" data-ph="${id}">...</div>`).join('') +
+    `<button type="button" class="addph" id="addPhoto">${ICON.cam}<span>Adicionar<br>foto</span></button>`;
+  $('#addPhoto').onclick = () => $('#photoInput').click();
+  for (const id of ids) {
+    const p = await getPhoto(id);
+    const slot = grid.querySelector(`[data-ph="${id}"]`); if (!slot) continue;
+    if (!p) { slot.textContent = navigator.onLine ? 'Indisponível' : 'Sem internet'; continue; }
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ph'; b.innerHTML = `<img alt="Foto" src="${p.thumb}">`;
+    b.onclick = () => openViewer(p);
+    slot.replaceWith(b);
+  }
+}
+$('#photoInput').onchange = async (e) => {
+  const files = [...e.target.files]; e.target.value = '';
+  const t = tasks.get(editing); if (!t || !files.length) return;
+  toast(files.length > 1 ? 'Salvando fotos...' : 'Salvando foto...');
+  const ids = [...(t.photoIds || [])];
+  for (const f of files) {
+    try {
+      const img = await loadImg(f);
+      let data = toJpeg(img, 1280, 0.7);
+      if (data.length > 800000) data = toJpeg(img, 1024, 0.55);
+      const p = { id: newId(), taskId: t.id, data, thumb: toJpeg(img, 240, 0.6), createdAt: Date.now() };
+      await savePhoto(p); ids.push(p.id);
+    } catch { toast('Não foi possível ler uma das imagens.'); }
+  }
+  const cur = tasks.get(t.id); if (cur) putTask({ ...cur, photoIds: ids });
+  renderPhotos(); toast(files.length > 1 ? 'Fotos adicionadas' : 'Foto adicionada');
+};
+let viewing = null;
+function openViewer(p) { viewing = p; $('#viewerImg').src = p.data; $('#viewer').showModal(); }
+$('#closeViewer').onclick = () => $('#viewer').close();
+$('#delPhoto').onclick = () => {
+  const t = tasks.get(editing) || tasks.get(viewing?.taskId); if (!viewing || !t) return;
+  putTask({ ...t, photoIds: (t.photoIds || []).filter((x) => x !== viewing.id) });
+  removePhoto(viewing.id); viewing = null; $('#viewer').close(); renderPhotos();
+};
+
 // ---------- Configurações ----------
 const settings = $('#settingsDlg');
-$('#openSettings').onclick = () => { refreshSettings(); settings.showModal(); };
+$('#openSettings').onclick = () => { refreshSettings(); refreshNotifState(); settings.showModal(); };
 $('#syncPill').onclick = $('#openSettings').onclick;
 $('#closeSettings').onclick = () => settings.close();
 
@@ -433,12 +774,8 @@ $('#saveCfg').onclick = () => {
   if (!cfg) { toast('Configuração inválida. Copie o bloco firebaseConfig inteiro.'); return; }
   store.set(LS_CFG, JSON.stringify(cfg)); location.reload();
 };
-$('#removeCfg').onclick = () => {
-  if (!confirm('Remover a sincronização deste aparelho? As atividades continuam salvas aqui.')) return;
-  store.del(LS_CFG); location.reload();
-};
+$('#removeCfg').onclick = () => { store.del(LS_CFG); location.reload(); };
 
-// Exportar / importar
 $('#exportBtn').onclick = () => {
   const blob = new Blob([JSON.stringify({ app: 'minhas-atividades', exportedAt: new Date().toISOString(), tasks: [...tasks.values()] }, null, 2)], { type: 'application/json' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `atividades-${today()}.json`; a.click();
@@ -481,7 +818,7 @@ async function startCloud() {
     const [{ initializeApp }, A, F] = await Promise.all([import(FB + 'firebase-app.js'), import(FB + 'firebase-auth.js'), import(FB + 'firebase-firestore.js')]);
     const app = initializeApp(cfg);
     const auth = A.getAuth(app);
-    const db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) });
+    const db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager(), cacheSizeBytes: F.CACHE_SIZE_UNLIMITED }) });
     fb = { A, F, auth, db };
     A.onAuthStateChanged(auth, (user) => { user ? attach(user) : detach(); refreshSettings(); });
   } catch (e) {
@@ -491,25 +828,34 @@ async function startCloud() {
 function attach(user) {
   const { F, db } = fb;
   const col = F.collection(db, 'users', user.uid, 'tasks');
+  const pcol = F.collection(db, 'users', user.uid, 'photos');
+  const fail = (e) => { console.error(e); setSync('error'); };
   cloud = {
-    put: (t) => F.setDoc(F.doc(col, t.id), t).catch((e) => { console.error(e); setSync('error'); }),
-    del: (id) => F.deleteDoc(F.doc(col, id)).catch((e) => { console.error(e); setSync('error'); }),
+    put: (t) => F.setDoc(F.doc(col, t.id), t).catch(fail),
+    del: (id) => F.deleteDoc(F.doc(col, id)).catch(fail),
+    putPhoto: (p) => F.setDoc(F.doc(pcol, p.id), p).catch(fail),
+    delPhoto: (id) => F.deleteDoc(F.doc(pcol, id)).catch(fail),
+    getPhoto: async (id) => { try { const s = await F.getDoc(F.doc(pcol, id)); return s.exists() ? s.data() : null; } catch { return null; } },
   };
   const migKey = 'atividades.migrated.' + user.uid;
   let first = true;
-  unsub = F.onSnapshot(col, { includeMetadataChanges: true }, (snap) => {
+  unsub = F.onSnapshot(col, { includeMetadataChanges: true }, async (snap) => {
     if (first) {
       first = false;
-      // Na primeira vez, envia as atividades que já existiam neste aparelho.
+      // Na primeira vez, envia as atividades e fotos que já existiam neste aparelho.
       if (!store.get(migKey)) {
         const ids = new Set(snap.docs.map((d) => d.id));
-        for (const t of tasks.values()) if (!ids.has(t.id)) cloud.put(t);
+        for (const t of tasks.values()) {
+          if (ids.has(t.id)) continue;
+          cloud.put(t);
+          for (const pid of t.photoIds || []) { const p = await idb.get(pid).catch(() => null); if (p) cloud.putPhoto(p); }
+        }
         store.set(migKey, '1');
         return;
       }
     }
     tasks = new Map(snap.docs.map((d) => [d.id, d.data()]));
-    saveLocal(); render();
+    saveLocal(); render(); checkReminders();
     setSync(snap.metadata.hasPendingWrites ? 'pending' : snap.metadata.fromCache ? 'offline' : 'synced');
   }, (e) => { console.error(e); setSync('error', e.code === 'permission-denied' ? 'Sem permissão (regras)' : 'Erro na sincronização'); });
 }
@@ -531,9 +877,15 @@ $('#signOut').onclick = async () => { await fb.A.signOut(fb.auth); $('#authMsg')
 window.addEventListener('online', () => { if (cloud) setSync('pending', 'Sincronizando...'); else if (getCfg() && !fb) startCloud(); });
 window.addEventListener('offline', () => { if (getCfg()) setSync('offline'); });
 
+// Abrir atividade a partir da notificação
+const openFromUrl = () => { const id = new URLSearchParams(location.search).get('t'); const t = id && tasks.get(id); if (t) { go(t.date); openTask(t); } };
+navigator.serviceWorker?.addEventListener('message', (e) => { const t = tasks.get(e.data?.openTask); if (t) { go(t.date); openTask(t); } });
+
 // ---------- Início ----------
 render();
 startCloud();
+checkReminders();
+openFromUrl();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
