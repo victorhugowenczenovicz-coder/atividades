@@ -1,5 +1,5 @@
 // Service worker: guarda o app no aparelho para abrir sem internet.
-const VERSION = 'atividades-v1';
+const VERSION = 'atividades-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 const FIREBASE_CDN = 'https://www.gstatic.com/firebasejs/';
 

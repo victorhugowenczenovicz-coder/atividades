@@ -187,7 +187,7 @@
         <div class="row" style="margin-top:8px"><button class="btn" id="signOut">Sair da conta</button></div>
       </div>
       <p class="msg" id="authMsg"></p>
-      <div class="row"><button class="btn danger" id="removeCfg">Remover configuração do Firebase</button></div>
+      <div class="row" hidden><button class="btn danger" id="removeCfg">Remover configuração do Firebase</button></div>
     </div>
 
     <div class="sep"></div>
@@ -410,7 +410,16 @@ function parseCfg(txt) {
   for (const k of keys) { const m = txt.match(new RegExp(`["']?${k}["']?\\s*:\\s*["']([^"']+)["']`)); if (m) cfg[k] = m[1]; }
   return cfg.apiKey && cfg.projectId && cfg.appId ? cfg : null;
 }
-const getCfg = () => { try { return JSON.parse(store.get(LS_CFG)); } catch { return null; } };
+// Configuração do projeto Firebase "atividades" (não é secreta: a proteção vem das regras do Firestore).
+const DEFAULT_CFG = {
+  apiKey: 'AIzaSyAd1z40I1QJ2EY50BnkysSjkDQux704jXc',
+  authDomain: 'atividades-b3c96.firebaseapp.com',
+  projectId: 'atividades-b3c96',
+  storageBucket: 'atividades-b3c96.firebasestorage.app',
+  messagingSenderId: '973091135498',
+  appId: '1:973091135498:web:0f1b2bad009375c6abfff3',
+};
+const getCfg = () => { try { return JSON.parse(store.get(LS_CFG)) || DEFAULT_CFG; } catch { return DEFAULT_CFG; } };
 
 function refreshSettings() {
   const has = !!getCfg();
